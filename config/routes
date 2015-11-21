@@ -5,4 +5,6 @@
 /robots.txt RobotsR GET
 
 / HomeR GET POST
-/wiki/ WikiPageR GET
+/wiki/ WikiPageR GET POST
+
+/api/wiki/ WikiIndexApiR GET

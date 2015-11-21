@@ -10,3 +10,9 @@ import Database.Persist.Quasi
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
 
+instance ToJSON (Entity WikiPage) where
+    toJSON (Entity pid p) = object
+      [ "id"      .= (String $ toPathPiece pid)
+      , "title"   .= wikiPageTitle p
+      , "content" .= wikiPageContent p
+      ]
