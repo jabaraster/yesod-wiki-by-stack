@@ -1,0 +1,8 @@
+<h1>Wiki Index
+
+<ul>
+  $forall page <- pages
+    <li>page.title
+
+<hr>
+<a href=@{HomeR} .btn .btn-primary>Homeへ
