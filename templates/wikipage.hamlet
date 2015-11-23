@@ -1,0 +1,6 @@
+<h2>#{wikiPageTitle page}
+<p>
+  $forall token <- tokens
+    #{token}
+<hr>
+<a href=@{WikiPageIndexR}>Wikiページ一覧へ

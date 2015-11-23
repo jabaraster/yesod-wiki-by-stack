@@ -32,6 +32,16 @@ getWikiPageNewR = do
 getWikiPageR :: WikiPageId -> Handler Html
 getWikiPageR pageId = do
     page <- runDB $ get404 pageId
+    let tokens = process $ wikiPageContent page
+    defaultLayout $ do
+        setTitle $ toHtml $ ((wikiPageTitle page) ++ " - Wiki")
+        $(widgetFile "wikipage")
+    where
+        process content = [content]
+
+getWikiPageEditR :: WikiPageId -> Handler Html
+getWikiPageEditR pageId = do
+    page <- runDB $ get404 pageId
     (formWidget, _) <- generateFormPost $ form' page
     defaultLayout $ do
         setTitle "Wikiページの編集"
