@@ -1,13 +1,13 @@
-<h2>ページ追加
-<form method=post action=@{WikiPageR}>
-    ^{formWidget}
-    <button type=submit .btn .btn-default>保存
+<h2>Wikiページ一覧
 
-<h2>Wiki Index
-
-<ul>
-  $forall Entity _ page <- pages
-    <li>#{wikiPageTitle page}
+<table .table .table-striped>
+  <thead>
+    <tr>
+      <th>タイトル
+  $forall Entity pageId page <- pages
+    <tbody>
+      <tr>
+        <td><a href=@{WikiPageR pageId}>#{wikiPageTitle page}
 
 <hr>
-<a href=@{HomeR} .btn .btn-primary>Homeへ
+<a href=@{WikiPageNewR} .btn .btn-primary>新しくWikiページを作成

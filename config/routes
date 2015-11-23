@@ -4,7 +4,9 @@
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 
-/ HomeR GET POST
-/wiki/ WikiPageR GET POST
+/                 WikiPageIndexR GET POST
+/new              WikiPageNewR   GET
+/page/#WikiPageId WikiPageR      GET POST
+
 
 /api/wiki/ WikiIndexApiR GET

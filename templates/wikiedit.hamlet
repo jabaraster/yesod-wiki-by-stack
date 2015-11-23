@@ -1,0 +1,6 @@
+<h2>Wikiページ
+<form action=@{WikiPageR pageId} method=post>
+  ^{formWidget}
+
+  <button type=submit .btn .btn-success>送信
+  <a href=@{WikiPageIndexR} .btn .btn-default>キャンセル
