@@ -2,5 +2,7 @@
 <form action=@{WikiPageIndexR} method=post>
   ^{formWidget}
 
-  <button type=submit .btn .btn-success>送信
-  <a href=@{WikiPageIndexR} .btn .btn-default>キャンセル
+  <button type=submit .btn .btn-success>
+    <span .glyphicon .glyphicon-ok>送信
+  <a href=@{WikiPageIndexR} .btn .btn-default>
+    <span .glyphicon .glyphicon-cancel>キャンセル

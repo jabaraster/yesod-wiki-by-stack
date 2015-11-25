@@ -11,4 +11,5 @@
           <a href=@{WikiPageR pageId}>#{wikiPageTitle page}
 
 <hr>
-<a href=@{WikiPageNewR} .btn .btn-primary>新しくWikiページを作成
+<a href=@{WikiPageNewR} .btn .btn-primary>
+  <span .glyphicon .glyphicon-plus>新しくWikiページを作成

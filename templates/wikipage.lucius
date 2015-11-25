@@ -1,0 +1,6 @@
+p.content {
+    white-space: pre;
+}
+a.broken {
+    color: rgba(200,30,30,1);
+}

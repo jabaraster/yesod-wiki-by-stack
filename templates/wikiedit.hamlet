@@ -3,4 +3,4 @@
   ^{formWidget}
 
   <button type=submit .btn .btn-success>送信
-  <a href=@{WikiPageIndexR} .btn .btn-default>キャンセル
+  <a href=@{WikiPageR pageId} .btn .btn-default>キャンセル

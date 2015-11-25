@@ -1,6 +1,15 @@
 <h2>#{wikiPageTitle page}
-<p>
+<p .content>
   $forall token <- tokens
-    #{token}
+    $case token
+      $of Plain text
+        #{text}
+      $of Link title key
+        <a href=@{WikiPageR key}>#{title}
+      $of BrokenLink title
+        <a href=@{WikiPageNewR}?title=#{title} .broken>?#{title}?
 <hr>
-<a href=@{WikiPageIndexR}>Wikiページ一覧へ
+<a href=@{WikiPageEditR pageId} .btn .btn-primary>
+  <span .glyphicon .glyphicon-pencil>このページを編集
+<a href=@{WikiPageIndexR} .btn .btn-default>
+  <span .glyphicon .glyphicon-index>Wikiページ一覧へ

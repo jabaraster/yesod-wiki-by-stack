@@ -4,7 +4,7 @@ import Import
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3, withSmallInput)
 import qualified Data.Map as M
 import qualified Data.List as L
-import Data.Text
+import Util.Web
 import Util.Wiki
 
 getWikiPageIndexR :: Handler Html
@@ -28,7 +28,8 @@ postWikiPageIndexR = do
 
 getWikiPageNewR :: Handler Html
 getWikiPageNewR = do
-    (formWidget, _) <- generateFormPost form
+    mTitle <- lookupQueryStringParameterValue "title"
+    (formWidget, _) <- generateFormPost $ formWithTitle mTitle
     defaultLayout $ do
         setTitle "新しいWikiページ"
         $(widgetFile "wikinew")
@@ -36,27 +37,32 @@ getWikiPageNewR = do
 getWikiPageR :: WikiPageId -> Handler Html
 getWikiPageR pageId = do
     page <- runDB $ get404 pageId
-    let tokens = processWikiContent $ unTextarea $ wikiPageContent page
+    tokens <- processWikiContent $ unTextarea $ wikiPageContent page
     defaultLayout $ do
         setTitle $ toHtml $ ((wikiPageTitle page) ++ " - Wiki")
         $(widgetFile "wikipage")
 
-processWikiContent :: Text -> WikiContent
-processWikiContent text =
-    let wikiTokens = toWikiTokens text
-        titles     = extractPageTitle wikiTokens
-        titleKeys  = collectKeys titles
-    in
-    L.map (conv titleKeys) wikiTokens
+processWikiContent :: Text -> Handler WikiContent
+processWikiContent text = do
+    wikiTokens <- return $ toWikiTokens text
+    titleKeys <- collectKeys $ extractPageTitle wikiTokens
+    return $ L.map (conv titleKeys) wikiTokens
   where
-     collectKeys :: [WikiToken] -> M.Map WikiToken (Key WikiPage)
-     collectKeys = undefined
+     collectKeys ts = do
+         pages <- runDB $ selectList [WikiPageTitle <-. toPageTitles ts] []
+         return $ M.fromList $ L.map (\(Entity key page) -> (wikiPageTitle page, key)) pages
 
-     conv :: (M.Map WikiToken (Key WikiPage)) -> WikiToken -> Token
-     conv _ (PlainText text) = Plain text
-     conv m (PageTitle text) = undefined
+     toPageTitles :: [WikiToken] -> [Text]
+     toPageTitles = L.nub . L.map toPageTitle . L.filter isPageTitle
 
-data Token = Plain Text | Link Text (Key WikiPage) | BlokenLink Text
+     conv :: (M.Map Text (Key WikiPage)) -> WikiToken -> Token
+     conv _ (PlainText t) = Plain t
+     conv m (PageTitle title) =
+         case M.lookup title m of
+             Just key -> Link title key
+             Nothing  -> BrokenLink title
+
+data Token = Plain Text | Link Text (Key WikiPage) | BrokenLink Text
 type WikiContent = [Token]
 
 getWikiPageEditR :: WikiPageId -> Handler Html
@@ -76,8 +82,8 @@ postWikiPageR pageId = do
     case mNewPage of
         Just newPage -> do
              _ <- runDB $ update pageId [WikiPageTitle =. (fst newPage), WikiPageContent =. (snd newPage)]
-             redirect WikiPageIndexR
-        Nothing      -> redirect WikiPageIndexR
+             redirect $ WikiPageR pageId
+        Nothing      -> redirect $ WikiPageIndexR
 
 getWikiIndexApiR :: Handler Value
 getWikiIndexApiR = do
@@ -93,3 +99,9 @@ form' :: WikiPage -> Form (Text, Textarea)
 form' page = renderBootstrap3 BootstrapBasicForm $ (,)
     <$> areq textField (withSmallInput "タイトル") (Just (wikiPageTitle page))
     <*> areq textareaField (withSmallInput "ソース") (Just (wikiPageContent page))
+
+formWithTitle :: Maybe Text -> Form (Text, Textarea)
+formWithTitle mt = renderBootstrap3 BootstrapBasicForm $ (,)
+    <$> areq textField (withSmallInput "タイトル") mt
+    <*> areq textareaField (withSmallInput "ソース") Nothing
+

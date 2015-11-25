@@ -19,6 +19,10 @@ isPageTitle :: WikiToken -> Bool
 isPageTitle (PlainText _) = False
 isPageTitle (PageTitle _) = True
 
+toPageTitle :: WikiToken -> Text
+toPageTitle (PlainText _) = ""
+toPageTitle (PageTitle t) = t
+
 extractPageTitle :: [WikiToken] -> [WikiToken]
 extractPageTitle = L.filter isPageTitle
 
