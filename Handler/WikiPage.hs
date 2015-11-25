@@ -2,6 +2,10 @@ module Handler.WikiPage where
 
 import Import
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3, withSmallInput)
+import qualified Data.Map as M
+import qualified Data.List as L
+import Data.Text
+import Util.Wiki
 
 getWikiPageIndexR :: Handler Html
 getWikiPageIndexR = do
@@ -32,12 +36,28 @@ getWikiPageNewR = do
 getWikiPageR :: WikiPageId -> Handler Html
 getWikiPageR pageId = do
     page <- runDB $ get404 pageId
-    let tokens = process $ wikiPageContent page
+    let tokens = processWikiContent $ unTextarea $ wikiPageContent page
     defaultLayout $ do
         setTitle $ toHtml $ ((wikiPageTitle page) ++ " - Wiki")
         $(widgetFile "wikipage")
-    where
-        process content = [content]
+
+processWikiContent :: Text -> WikiContent
+processWikiContent text =
+    let wikiTokens = toWikiTokens text
+        titles     = extractPageTitle wikiTokens
+        titleKeys  = collectKeys titles
+    in
+    L.map (conv titleKeys) wikiTokens
+  where
+     collectKeys :: [WikiToken] -> M.Map WikiToken (Key WikiPage)
+     collectKeys = undefined
+
+     conv :: (M.Map WikiToken (Key WikiPage)) -> WikiToken -> Token
+     conv _ (PlainText text) = Plain text
+     conv m (PageTitle text) = undefined
+
+data Token = Plain Text | Link Text (Key WikiPage) | BlokenLink Text
+type WikiContent = [Token]
 
 getWikiPageEditR :: WikiPageId -> Handler Html
 getWikiPageEditR pageId = do

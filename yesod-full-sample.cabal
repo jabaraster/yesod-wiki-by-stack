@@ -22,6 +22,7 @@ library
                      Settings.StaticFiles
                      Handler.Common
                      Handler.WikiPage
+                     Util.Wiki
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -82,6 +83,7 @@ library
                  , containers
                  , vector
                  , time
+                 , parsec
 
 executable         yesod-full-sample
     if flag(library-only)
