@@ -7,9 +7,12 @@
       $of Link title key
         <a href=@{WikiPageR key}>#{title}
       $of BrokenLink title
-        <a href=@{WikiPageNewR}?title=#{title} .broken>?#{title}?
+        <a href=@{WikiPageNewR}?title=#{escapeURL title} .broken>?#{title}?
 <hr>
 <a href=@{WikiPageEditR pageId} .btn .btn-primary>
   <span .glyphicon .glyphicon-pencil>このページを編集
+<hr>
 <a href=@{WikiPageIndexR} .btn .btn-default>
-  <span .glyphicon .glyphicon-index>Wikiページ一覧へ
+  <span .glyphicon .glyphicon-list>Wikiページ一覧へ
+<a href=@{WikiPageNewR} .btn .btn-primary>
+  <span .glyphicon .glyphicon-plus>新しくWikiページを作成

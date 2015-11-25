@@ -1,11 +1,11 @@
 stackを使ってYesodの環境を作った.
 stack、涙が出るほど素晴らしい.
 
-## ビルド
+# ビルド
 stackを使っている.
 
 
-### Amazon Linuxの場合
+## Amazon Linuxの場合
 
 ```shell
 sudo yum -y update
@@ -21,9 +21,9 @@ sudo yum -y install stack
 
 ```shell
 cd /tmp
-wget https://github.com/jabaraster/yesod-wiki-by-stack/archive/20151123_1st.zip
-unzip 20151123_1st.zip
-sudo mv yesod-wiki-by-stack-20151123_1st/ /opt/yesod-full-sample
+wget https://github.com/jabaraster/yesod-wiki-by-stack/archive/20151125_v01.zip
+unzip 20151125_v01.zip
+sudo mv yesod-wiki-by-stack-20151125_v01/ /opt/yesod-full-sample
 cd /opt/yesod-full-sample
 ```
 
@@ -40,9 +40,14 @@ stack setup
 ```
 
 ```shell
+stack install yesod-bin cabal-install --install-ghc
+```
+
+```shell
 stack build
 ```
-ここはかなり時間がかかります.
+
+ここ↑はかなり時間がかかります.
 
 ```shell
 stack install
@@ -63,8 +68,8 @@ sudo vi /etc/nginx/nginx.conf
 55行目辺りの以下の記述を変更.  
 変更前)  
 ```
-55         location / {
-56         }
+55         location / {  
+56         } 
 ```
 
 変更後)  
@@ -78,16 +83,25 @@ sudo vi /etc/nginx/nginx.conf
 sudo service nginx restart
 ```
 
-## サーバ起動
+# サーバ起動
 環境変数APPROOTの設定が必要な点に注意.
 
 ```shell
 export APPROOT=http://<ホスト名>
-yesod-full-sample
+yesod-full-sample &
 ```
 
-## 開発用サーバ(develモード)の起動
+# 開発用サーバ(develモード)の起動
 stack exec -- yesod devel
 
-## TODO
+# TODO
 OS起動時に自動起動する設定.
+
+# 開発の苦労した箇所のメモ
+[Qiitaに投稿](http://qiita.com/jabaraster/items/2283f03a70e2bdcf9fb9)しておいた.  
+
+# 対処したい事項
+
+* 認証（フォーム認証）
+* PageLinkの後に改行が入ってしまう現象. CSSの問題か？
+* Ajax
