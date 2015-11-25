@@ -1,0 +1,9 @@
+#{extra}
+<div .form-group>
+  <label>タイトル
+  ^{fvInput titleView}
+<div .form-group>
+  <label>ソース
+  <small>[[...]]で囲んだ...の部分がページリンクになります。
+  ^{fvInput contentView}
+<hr>

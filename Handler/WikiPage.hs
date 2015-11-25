@@ -1,22 +1,24 @@
 module Handler.WikiPage where
 
 import Import
-import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3, withSmallInput)
 import qualified Data.Map as M
 import qualified Data.List as L
 import Util.Web
 import Util.Wiki
 
+setTitle' :: MonadWidget m => Html -> m ()
+setTitle' title = setTitle (title ++ " - Wiki by Yesod")
+
 getWikiPageIndexR :: Handler Html
 getWikiPageIndexR = do
     pages <- runDB $ selectList [] [Asc WikiPageTitle]
     defaultLayout $ do
-        setTitle "Wikiページ一覧"
+        setTitle' "Wikiページ一覧"
         $(widgetFile "wikiindex")
 
 postWikiPageIndexR :: Handler Html
 postWikiPageIndexR = do
-    ((result, _), _) <- runFormPost form
+    ((result, _), _) <- runFormPost formEmpty
     let mNewPage = case result of
             FormSuccess res -> Just res
             _               -> Nothing
@@ -31,7 +33,7 @@ getWikiPageNewR = do
     mTitle <- lookupQueryStringParameterValue "title"
     (formWidget, _) <- generateFormPost $ formWithTitle mTitle
     defaultLayout $ do
-        setTitle "新しいWikiページ"
+        setTitle' "新しいWikiページ"
         $(widgetFile "wikinew")
 
 getWikiPageR :: WikiPageId -> Handler Html
@@ -39,7 +41,7 @@ getWikiPageR pageId = do
     page <- runDB $ get404 pageId
     tokens <- processWikiContent $ unTextarea $ wikiPageContent page
     defaultLayout $ do
-        setTitle $ toHtml $ ((wikiPageTitle page) ++ " - Wiki")
+        setTitle' $ toHtml $ ((wikiPageTitle page) ++ " - Wiki")
         $(widgetFile "wikipage")
 
 processWikiContent :: Text -> Handler WikiContent
@@ -68,14 +70,14 @@ type WikiContent = [Token]
 getWikiPageEditR :: WikiPageId -> Handler Html
 getWikiPageEditR pageId = do
     page <- runDB $ get404 pageId
-    (formWidget, _) <- generateFormPost $ form' page
+    (formWidget, _) <- generateFormPost $ formWithPage page
     defaultLayout $ do
-        setTitle "Wikiページの編集"
+        setTitle' "Wikiページの編集"
         $(widgetFile "wikiedit")
 
 postWikiPageR :: WikiPageId -> Handler Html
 postWikiPageR pageId = do
-    ((result, _), _) <- runFormPost form
+    ((result, _), _) <- runFormPost formEmpty
     let mNewPage = case result of
             FormSuccess res -> Just res
             _               -> Nothing
@@ -90,18 +92,24 @@ getWikiIndexApiR = do
     pages <- runDB $ selectList [] [Asc WikiPageTitle]
     return $ object ["pages" .= pages]
 
-form :: Form (Text, Textarea)
-form = renderBootstrap3 BootstrapBasicForm $ (,)
-    <$> areq textField (withSmallInput "タイトル") Nothing
-    <*> areq textareaField (withSmallInput "ソース") Nothing
+type WikiPageInput = (Text, Textarea)
 
-form' :: WikiPage -> Form (Text, Textarea)
-form' page = renderBootstrap3 BootstrapBasicForm $ (,)
-    <$> areq textField (withSmallInput "タイトル") (Just (wikiPageTitle page))
-    <*> areq textareaField (withSmallInput "ソース") (Just (wikiPageContent page))
+formEmpty :: Html -> MForm Handler (FormResult WikiPageInput, Widget)
+formEmpty = formPrimary Nothing Nothing
 
-formWithTitle :: Maybe Text -> Form (Text, Textarea)
-formWithTitle mt = renderBootstrap3 BootstrapBasicForm $ (,)
-    <$> areq textField (withSmallInput "タイトル") mt
-    <*> areq textareaField (withSmallInput "ソース") Nothing
+formWithTitle :: Maybe Text -> Html -> MForm Handler (FormResult WikiPageInput, Widget)
+formWithTitle mt = formPrimary mt Nothing
+
+formWithPage :: WikiPage -> Html -> MForm Handler (FormResult WikiPageInput, Widget)
+formWithPage page = formPrimary (Just $ wikiPageTitle page) (Just $ wikiPageContent page)
+
+formPrimary :: Maybe Text -> Maybe Textarea -> Html -> MForm Handler (FormResult WikiPageInput, Widget)
+formPrimary mt mc extra = do
+    (titleValueResult  , titleView)   <- mreq textField (addClass "" "form-control") mt
+    (contentValueResult, contentView) <- mreq textareaField (addClass "" "form-control") mc
+    let result = (,)
+            <$> titleValueResult
+            <*> contentValueResult
+        widget = $(widgetFile "wiki-form")
+    return (result, widget)
 
