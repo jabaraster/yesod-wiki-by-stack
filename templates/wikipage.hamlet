@@ -12,7 +12,7 @@
 <a href=@{WikiPageEditR pageId} .btn .btn-primary>
   <span .glyphicon .glyphicon-pencil>このページを編集
 <hr>
-<a href=@{WikiPageIndexR} .btn .btn-default>
-  <span .glyphicon .glyphicon-list>Wikiページ一覧へ
 <a href=@{WikiPageNewR} .btn .btn-primary>
   <span .glyphicon .glyphicon-plus>新しくWikiページを作成
+<a href=@{WikiPageIndexR} .btn .btn-default>
+  <span .glyphicon .glyphicon-list>Wikiページ一覧へ

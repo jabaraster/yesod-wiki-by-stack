@@ -27,4 +27,3 @@ addClass' :: Text -> [(Text, Text)] -> [(Text, Text)]
 addClass' klass []                    = [("class", klass)]
 addClass' klass (("class", old):rest) = ("class", T.concat [old, " ", klass]) : rest
 addClass' klass (other         :rest) = other : addClass' klass rest
-
