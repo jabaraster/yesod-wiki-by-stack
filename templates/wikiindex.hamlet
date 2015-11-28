@@ -13,3 +13,11 @@
 <hr>
 <a href=@{WikiPageNewR} .btn .btn-primary>
   <span .glyphicon .glyphicon-plus>新しくWikiページを作成
+
+<hr>
+$maybe _ <- mi
+  <a href=@{AuthR LogoutR} .btn .btn-success>
+    <span .glyphicon .glyphicon-plus>ログアウト
+$nothing
+  <a href=@{AuthR LoginR} .btn .btn-success>
+    <span .glyphicon .glyphicon-plus>ログイン

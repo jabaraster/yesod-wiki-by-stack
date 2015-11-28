@@ -8,6 +8,7 @@ import Util.Wiki
 
 getWikiPageIndexR :: Handler Html
 getWikiPageIndexR = do
+    mi <- maybeAuth
     pages <- runDB $ selectList [] [Asc WikiPageTitle]
     defaultLayout $ do
         setTitle' "Wikiページ一覧"

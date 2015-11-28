@@ -2,6 +2,7 @@ module Model where
 
 import ClassyPrelude.Yesod
 import Database.Persist.Quasi
+import Yesod.Auth.HashDB (HashDBUser(..))
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
@@ -16,3 +17,10 @@ instance ToJSON (Entity WikiPage) where
       , "title"   .= wikiPageTitle p
       , "content" .= wikiPageContent p
       ]
+
+instance HashDBUser User where
+    userPasswordHash = Just . userPassword
+    userPasswordSalt = Just . userSalt
+    setSaltAndPasswordHash s h p = p { userSalt = s
+                                     , userPassword = h
+                                     }
