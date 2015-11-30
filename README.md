@@ -33,15 +33,19 @@ GHCのインストールに必要なライブラリをインストールする.
 sudo yum -y install zlib-devel
 ```
 
-GHCをインストールする.
+GHCをインストール.
 
 ```shell
 stack setup
 ```
 
+yesod関連ツールをインストール.
+
 ```shell
 stack install yesod-bin cabal-install --install-ghc
 ```
+
+ビルド.
 
 ```shell
 stack build
@@ -105,3 +109,4 @@ OS起動時に自動起動する設定.
 * 認証（フォーム認証）
 * PageLinkの後に改行が入ってしまう現象. CSSの問題か？
 * Ajax
+* WebSocket
